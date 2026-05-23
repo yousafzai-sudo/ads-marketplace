@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ads Marketplace</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+body { background: #f5f5f5; }
+nav { background: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.logo { font-size: 24px; font-weight: bold; color: #2563eb; }
+.logo span { color: #f59e0b; }
+.nav-buttons button { padding: 10px 20px; margin-left: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+.btn-outline { background: white; border: 2px solid #2563eb; color: #2563eb; }
+.btn-primary { background: #2563eb; border: 2px solid #2563eb; color: white; }
+.hero { background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 80px 5%; text-align: center; }
+.hero h1 { font-size: 48px; margin-bottom: 20px; }
+.hero p { font-size: 20px; margin-bottom: 30px; }
+.hero button { padding: 15px 40px; font-size: 18px; border-radius: 8px; cursor: pointer; margin: 5px; }
+.hero .btn-primary { background: white; color: #2563eb; border: none; }
+.hero .btn-outline { background: transparent; color: white; border: 2px solid white; }
+.stats { display: flex; justify-content: center; gap: 80px; padding: 40px 5%; background: white; }
+.stat-number { font-size: 40px; font-weight: bold; color: #2563eb; }
+.search { padding: 40px 5%; background: white; }
+.search-box { max-width: 900px; margin: 0 auto; display: flex; gap: 15px; flex-wrap: wrap; }
+.search-box input, .search-box select { flex: 1; min-width: 200px; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+.search-box button { padding: 15px 30px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+.listings { padding: 50px 5%; }
+.listings h2 { text-align: center; font-size: 36px; margin-bottom: 40px; }
+.listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+.card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.card-img { height: 180px; background: linear-gradient(45deg, #e5e7eb, #d1d5db); display: flex; align-items: center; justify-content: center; font-size: 60px; }
+.card-body { padding: 20px; }
+.tag { display: inline-block; padding: 5px 12px; background: #10b981; color: white; border-radius: 20px; font-size: 14px; margin-bottom: 10px; }
+.card-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+.card-price { font-size: 28px; color: #2563eb; font-weight: bold; }
+.card-details { margin: 15px 0; color: #666; }
+.card button { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+.modal.active { display: flex; }
+.modal-content { background: white; padding: 30px; border-radius: 12px; max-width: 450px; width: 90%; margin: auto; position: relative; }
+.modal-content h2 { margin-bottom: 20px; }
+.modal-close { position: absolute; right: 15px; top: 15px; font-size: 30px; cursor: pointer; background: none; border: none; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+.form-group input, .form-group select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+.form-group input:focus { outline: none; border-color: #2563eb; }
+footer { background: #1f2937; color: white; padding: 40px 5%; text-align: center; margin-top: 50px; }
+</style>
+</head>
+<body>
+<nav>
+<div class="logo">📢 Ads<span>Market</span></div>
+<div class="nav-buttons" id="nav-buttons">
+<button class="btn-outline" onclick="openModal('login')">Login</button>
+<button class="btn-primary" onclick="openModal('register')">Join Free</button>
+</div>
+</nav>
+
+<section class="hero">
+<h1>Buy & Sell Ad Space Online</h1>
+<p>Connect with top advertising agencies. Find the perfect ad placements.</p>
+<button class="btn-primary" onclick="openModal('register')">Get Started</button>
+<button class="btn-outline" onclick="document.getElementById('browse').scrollIntoView()">Browse</button>
+</section>
+
+<section class="stats">
+<div><div class="stat-number">2,500+</div><div>Active Agencies</div></div>
+<div><div class="stat-number">15,000+</div><div>Ad Placements</div></div>
+<div><div class="stat-number">$10M+</div><div>Ad Spend Managed</div></div>
+</section>
+
+<section class="search" id="browse">
+<div class="search-box">
+<input type="text" id="search-input" placeholder="Search ad placements...">
+<select id="search-category">
+<option value="">All Categories</option>
+<option value="digital">Digital Ads</option>
+<option value="social">Social Media</option>
+<option value="display">Display Ads</option>
+<option value="video">Video Ads</option>
+<option value="native">Native</option>
+</select>
+<button onclick="searchListings()">Search</button>
+</div>
+</section>
+
+<section class="listings">
+<h2>Featured Ad Placements</h2>
+<div class="listings-grid" id="listings-grid"></div>
+</section>
+
+<footer>
+<p>© 2024 AdsMarket. All rights reserved.</p>
+</footer>
+
+<!-- Login Modal -->
+<div class="modal" id="login-modal">
+<div class="modal-content">
+<button class="modal-close" onclick="closeModal('login')">×</button>
+<h2>Login</h2>
+<form onsubmit="handleLogin(event)">
+<div class="form-group"><label>Email</label><input type="email" id="login-email" required></div>
+<div class="form-group"><label>Password</label><input type="password" id="login-password" required></div>
+<button type="submit" class="btn-primary" style="width:100%">Login</button>
+</form>
+</div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal" id="register-modal">
+<div class="modal-content">
+<button class="modal-close" onclick="closeModal('register')">×</button>
+<h2>Create Account</h2>
+<form onsubmit="handleRegister(event)">
+<div class="form-group"><label>Email</label><input type="email" id="reg-email" required></div>
+<div class="form-group"><label>Agency Name</label><input type="text" id="reg-agency" required></div>
+<div class="form-group"><label>Password</label><input type="password" id="reg-password" required></div>
+<button type="submit" class="btn-primary" style="width:100%">Register</button>
+</form>
+</div>
+</div>
+
+<script>
+// Sample listings data
+const listings = [
+{ id: 1, category: 'digital', title: 'Premium Banner Ad - Tech Blog', price: '$500/month', icon: '🖥️', location: 'Global', views: '100K+ daily', agency: 'AdFlow' },
+{ id: 2, category: 'social', title: 'Instagram Influencer Campaign', price: '$2,500/package', icon: '📱', location: 'USA', views: '500K+ followers', agency: 'MediaMax' },
+{ id: 3, category: 'video', title: 'YouTube Pre-Roll Ads', price: '$0.03 CPM', icon: '📺', location: 'Global', views: '1M+ views', agency: 'VideoFirst' },
+{ id: 4, category: 'native', title: 'News Site Native Ads', price: '$1,200/month', icon: '📰', location: 'USA & UK', views: '200K+ daily', agency: 'NewsAds Pro' },
+{ id: 5, category: 'display', title: 'Programmatic Display Ads', price: '$0.50 CPM', icon: '🎯', location: 'Global', views: '5M+ daily', agency: 'AdTech' },
+{ id: 6, category: 'digital', title: 'Email Newsletter Ad', price: '$800/send', icon: '📧', location: 'USA', views: '50K+ subs', agency: 'MailBoost' }
+];
+
+let isLoggedIn = false;
+let currentUser = null;
+
+// Display listings
+function displayListings(data = listings) {
+const grid = document.getElementById('listings-grid');
+grid.innerHTML = data.map(item => `
+<div class="card">
+<div class="card-img">${item.icon}</div>
+<div class="card-body">
+<span class="tag">${item.category}</span>
+<h3 class="card-title">${item.title}</h3>
+<div class="card-price">${item.price}</div>
+<div class="card-details">📍 ${item.location} • 👥 ${item.views}</div>
+<button onclick="alert('Please login to contact ${item.agency}')">Contact Agency</button>
+</div>
+</div>
+`).join('');
+}
+
+// Search function
+function searchListings() {
+const query = document.getElementById('search-input').value.toLowerCase();
+const category = document.getElementById('search-category').value;
+let filtered = listings;
+if (query) filtered = filtered.filter(l => l.title.toLowerCase().includes(query) || l.agency.toLowerCase().includes(query));
+if (category) filtered = filtered.filter(l => l.category === category);
+displayListings(filtered);
+}
+
+// Modal functions
+function openModal(type) {
+document.getElementById(type + '-modal').classList.add('active');
+}
+function closeModal(type) {
+document.getElementById(type + '-modal').classList.remove('active');
+}
+
+// Handle login
+function handleLogin(e) {
+e.preventDefault();
+const email = document.getElementById('login-email').value;
+const password = document.getElementById('login-password').value;
+if (email && password) {
+isLoggedIn = true;
+currentUser = email;
+document.getElementById('nav-buttons').innerHTML = '<button class="btn-outline" onclick="logout()">Logout</button>';
+closeModal('login');
+alert('Login successful! Welcome back.');
+}
+}
+
+// Handle register
+function handleRegister(e) {
+e.preventDefault();
+const email = document.getElementById('reg-email').value;
+const agency = document.getElementById('reg-agency').value;
+alert('Registration successful! Please login.');
+closeModal('register');
+openModal('login');
+}
+
+// Logout
+function logout() {
+isLoggedIn = false;
+currentUser = null;
+document.getElementById('nav-buttons').innerHTML = '<button class="btn-outline" onclick="openModal(\'login\')">Login</button><button class="btn-primary" onclick="openModal(\'register\')">Join Free</button>';
+alert('Logged out successfully.');
+}
+
+// Initialize
+displayListings();
+</script>
+</body>
+</html>
